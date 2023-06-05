@@ -2,10 +2,6 @@ import mongoose from "mongoose";
 
 const addressSchema = new mongoose.Schema(
   {
-    chain: {
-      type: String,
-      required: true,
-    },
     address: {
       type: String,
       required: true,

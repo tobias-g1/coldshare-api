@@ -1,13 +1,13 @@
 import { config } from "dotenv";
 import jwt from "jsonwebtoken";
-import { ethers } from "ethers";
 import Address from "../models/address.model.js";
 import User from "../models/user.model.js";
+import { ethers } from "ethers";
 
 config();
 
 async function login(req, res) {
-  const { message, signature, chain } = req.body;
+  const { message, signature } = req.body;
   const address = req.params.address.toLowerCase();
 
   try {
@@ -21,7 +21,6 @@ async function login(req, res) {
       // Create a new address associated with the new user
       existingAddress = new Address({
         address,
-        chain,
         user: newUser._id,
       });
       await existingAddress.save();
@@ -46,6 +45,7 @@ async function login(req, res) {
     res.status(401).json({ error: "Unauthorized" });
   }
 }
+
 function validateMessageTimestamp(message) {
   const messageParts = message.split(":");
   const messageTimestamp = messageParts[1];
@@ -91,15 +91,13 @@ async function getUser(req, res) {
 }
 
 async function updateUser(req, res) {
-  const { email } = req.body;
+  const { username, profileImage, bio, url } = req.body;
 
   try {
     const user = await User.findById(req.userId);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-
-    if (email) user.profileImage = profileImage;
 
     await user.save();
 

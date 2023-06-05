@@ -1,5 +1,5 @@
 {
-  "name": "coldstack-api",
+  "name": "theta-hackathon-backend",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,37 +9,28 @@
     "dev": "nodemon src/index.js",
     "start": "node src/index.js"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@adraffy/ens-normalize": "^1.9.2",
+    "@aws-sdk/client-s3": "^3.345.0",
+    "aws-sdk": "^2.0.0",
     "axios": "^1.3.5",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^16.0.3",
     "ethereumjs-util": "^7.1.5",
-    "ethers": "6.0.0",
+    "ethers": "^5.7.2",
     "express": "^4.18.2",
     "helmet": "^6.1.5",
+    "https": "^1.0.0",
     "js-sha3": "^0.8.0",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.4",
     "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "multer-s3": "^2.0.0",
     "nodemon": "^2.0.22",
-    "secp256k1": "^5.0.0",
-    "swagger-ui-express": "^4.2.1",
-    "swagger-jsdoc": "4.2.1"
-  },
-  "exports": {
-    "node_modules/@adraffy/ens-normalize": "./node_modules/@adraffy/ens-normalize/dist/index.mjs"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.22.1",
-    "@babel/preset-env": "^7.22.4",
-    "babel-loader": "^9.1.2",
-    "webpack": "^5.85.0",
-    "webpack-cli": "^5.1.1"
+    "secp256k1": "^5.0.0"
   }
 }

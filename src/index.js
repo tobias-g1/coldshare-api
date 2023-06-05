@@ -17,6 +17,7 @@ config();
 // Routes
 
 import user from "./routes/user.route.js";
+import files from "./routes/file.route.js";
 
 // Initialize Middleware
 
@@ -32,6 +33,7 @@ app.use(cors());
 // Routes
 
 app.use("/user", user);
+app.use("/files", files);
 
 // Start Listening
 

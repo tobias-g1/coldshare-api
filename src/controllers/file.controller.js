@@ -1,4 +1,5 @@
 import { config } from "dotenv";
+import { File } from "../models/file.model.js";
 import { SharedFiles } from "../models/shared.model.js";
 import fileService from "../services/file.service.js";
 import uploadService from "../services/upload.service.js";
@@ -67,8 +68,10 @@ class FileController {
       const result = await fileService.getFileByPinCode(code);
 
       if (result.success) {
-
-        if (res.locals.user?._id && result.file.userId !== res.locals.user._id) {
+        if (
+          res.locals.user?._id &&
+          result.file.userId !== res.locals.user._id
+        ) {
           // Check if a shared file already exists for the user and file
           const existingSharedFile = await SharedFiles.findOne({
             user: res.locals.user._id,
@@ -152,6 +155,23 @@ class FileController {
   async getShareLink(req, res) {
     try {
       const { fileId } = req.params;
+
+      // Look up the file by its ID
+      const file = await File.findById(fileId);
+
+      // Check if the file exists
+      if (!file) {
+        return res.status(404).send("File not found");
+      }
+
+      // Check if the file owner matches the user id
+      if (
+        file.owner &&
+        file.owner.toString() !== res.locals.user._id.toString()
+      ) {
+        return res.status(403).send("Access Denied");
+      }
+
       const shareLink = await fileService.getShareLink(fileId);
       res.send(shareLink);
     } catch (error) {
@@ -163,6 +183,23 @@ class FileController {
   async getShareCode(req, res) {
     try {
       const { fileId } = req.params;
+
+      // Look up the file by its ID
+      const file = await File.findById(fileId);
+
+      // Check if the file exists
+      if (!file) {
+        return res.status(404).send("File not found");
+      }
+
+      // Check if the file owner matches the user id
+      if (
+        file.owner &&
+        file.owner.toString() !== res.locals.user._id.toString()
+      ) {
+        return res.status(403).send("Access Denied");
+      }
+
       const shareCode = await fileService.getPinCode(fileId);
       res.send(shareCode);
     } catch (error) {
@@ -170,7 +207,6 @@ class FileController {
       res.status(500).send("Internal Server Error");
     }
   }
-  
 }
 
 export default new FileController();

@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 const shareLinkSchema = new mongoose.Schema(
   {
     file: {
@@ -9,7 +11,7 @@ const shareLinkSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      default: generateUniqueString,
+      default: generateUniqueString(),
     },
     expirationDate: {
       type: Date,

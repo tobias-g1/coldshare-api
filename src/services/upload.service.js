@@ -52,7 +52,7 @@ class ColdStackUploadService {
   async uploadFile(req) {
     try {
       const files = await new Promise((resolve, reject) => {
-        upload.array("files")(req, {}, (error) => {
+        upload.array("file")(req, {}, (error) => {
           if (error) {
             console.error("Error uploading file:", error);
             reject(new Error("Failed to upload file"));

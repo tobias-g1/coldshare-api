@@ -21,7 +21,6 @@ async function login(req, res) {
       // Create a new address associated with the new user
       existingAddress = new Address({
         address,
-        chain: "theta",
         user: newUser._id,
       });
       await existingAddress.save();
@@ -46,6 +45,7 @@ async function login(req, res) {
     res.status(401).json({ error: "Unauthorized" });
   }
 }
+
 function validateMessageTimestamp(message) {
   const messageParts = message.split(":");
   const messageTimestamp = messageParts[1];
@@ -98,11 +98,6 @@ async function updateUser(req, res) {
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-
-    if (username) user.username = username;
-    if (profileImage) user.profileImage = profileImage;
-    if (bio) user.bio = bio;
-    if (url) user.url = url;
 
     await user.save();
 

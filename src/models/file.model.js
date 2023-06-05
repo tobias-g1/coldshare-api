@@ -21,14 +21,6 @@ const fileSchema = new mongoose.Schema(
       required: false,
       default: null,
     },
-    sharedWith: [
-      {
-        user: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-        },
-      },
-    ],
     format: {
       type: String,
       required: true,

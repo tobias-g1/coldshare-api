@@ -11,6 +11,7 @@ const pinCodeSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
       default: generateUniquePinCode,
     },
     expirationDate: {

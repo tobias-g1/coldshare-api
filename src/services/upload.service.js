@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import fs from "fs";
 import { config } from "dotenv";
 import https from "https";
+import AWS from "aws-sdk";
 import { NodeHttpHandler } from "@aws-sdk/node-http-handler";
 
 config();
@@ -28,7 +29,6 @@ const upload = multer({
     },
   }),
 });
-
 const bucket = process.env.COLDSTACK_BUCKET;
 const accessKeyId = process.env.COLDSTACK_ACCESS;
 const secretKey = process.env.COLDSTACK_SECRET;
@@ -36,7 +36,7 @@ const agent = new https.Agent({ rejectUnauthorized: false });
 
 const s3Client = new S3Client({
   region: "eu-central-1",
-  endpoint: `https://s3.coldstack.io/${bucket}`,
+  endpoint: `https://s3.coldstack.io`,
   credentials: {
     accessKeyId: accessKeyId,
     secretAccessKey: secretKey,
@@ -46,6 +46,13 @@ const s3Client = new S3Client({
       httpsAgent: agent,
     }),
   },
+});
+
+const awsSdkClient = new AWS.S3({
+  region: "eu-central-1",
+  accessKeyId: accessKeyId,
+  secretAccessKey: secretKey,
+  endpoint: `https://s3.coldstack.io`,
 });
 
 class ColdStackUploadService {
@@ -62,21 +69,25 @@ class ColdStackUploadService {
         });
       });
 
-      const uploadPromises = files.map((file) =>
-        this.uploadFileToColdStack(file)
-      );
+const uploadPromises = files.map((file) => this.uploadFileToColdStack(file));
+
       const responses = await Promise.all(uploadPromises);
-      console.log("Responses:", responses);
+      
+      console.log(responses)
 
-      // Delete files from disk
-      files.forEach((file) => {
-        fs.unlinkSync(file.path);
-      });
+// Add response.key to each response
+      responses.forEach((response, index) => {
+        console.log(response)
+        files[index].key = response.key; // Assuming files[index].key contains the desired key
+});
 
-      // Get the original file names
-      const originalNames = files.map((file) => file.originalname);
+// Delete files from disk
+files.forEach((file) => {
+  fs.unlinkSync(file.path);
+});
 
-      return { message: "Files uploaded successfully", originalNames };
+return files;
+
     } catch (error) {
       console.error("Error uploading files to ColdStack:", error);
       throw new Error("Failed to upload files");
@@ -103,6 +114,18 @@ class ColdStackUploadService {
       };
       const command = new PutObjectCommand(params);
       const response = await s3Client.send(command);
+
+      response.key = params.Key;
+
+      // Set the uploaded file to public read
+      const aclParams = {
+        Bucket: bucket,
+        Key: params.Key,
+        ACL: "public-read",
+      };
+      
+      await awsSdkClient.putObjectAcl(aclParams).promise();
+
       return response;
     } catch (error) {
       console.error("Error uploading file to ColdStack:", error);

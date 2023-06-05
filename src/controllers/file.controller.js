@@ -20,9 +20,11 @@ class FileController {
           // Create a new file record using the File model
           const { originalname, size, mimetype } = file;
 
+          console.log(file)
+
           const uploadedFile = await fileService.saveFile({
             name: originalname,
-            path: file.filename,
+            key: file.key,
             bucket: process.env.COLDSTACK_BUCKET,
             owner: res.locals.user?._id,
             format: mimetype,

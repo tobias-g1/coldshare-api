@@ -6,7 +6,7 @@ const fileSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    path: {
+    key: {
       type: String,
       required: true,
       unique: true,

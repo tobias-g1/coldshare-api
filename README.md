@@ -25,6 +25,9 @@ The API requires some configuration settings to run properly. Create a file name
 
 DB=<MongoDB_Connection_String>
 JWT_SECRET=<JWT_Secret_Key>
+COLDSTACK_BUCKET=your_coldstack_bucket_name
+COLDSTACK_SECRET=your_coldstack_secret_key
+COLDSTACK_ACCESS=your_coldstack_access_key
 
 For the DB variable, you can use a free cloud instance of MongoDB on Atlas or any other MongoDB provider.
 

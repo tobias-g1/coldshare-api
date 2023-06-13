@@ -116,7 +116,7 @@ class FileService {
 
   async getFilesForOwner(userId) {
     try {
-      const files = await File.find({ owner: userId }).populate("owner");
+      const files = await File.find({ owner: userId }).sort({createdAt: -1}).populate("owner");
 
       // Perform a lookup for the address
       const address = await Address.findOne({ user: userId });
@@ -139,7 +139,7 @@ class FileService {
 
   async getFilesSharedWithUser(userId) {
     try {
-      const sharedFiles = await SharedFiles.find({ user: userId }).populate(
+      const sharedFiles = await SharedFiles.find({ user: userId }).sort({createdAt: -1}).populate(
         "file"
       );
       const files = sharedFiles.map((sharedFile) => sharedFile.file);

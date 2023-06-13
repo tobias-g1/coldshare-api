@@ -9,9 +9,10 @@ const router = express.Router();
 router.post("/upload", verifyToken, FileController.uploadFile);
 router.delete("/files/:id", requireToken, verifyToken, FileController.deleteFile);
 router.get("/pin/:code", verifyToken, FileController.getFileByPinCode);
+router.get("/link/:link", verifyToken, FileController.getFileByShareLink);
 router.get("/shared",requireToken, verifyToken, FileController.getSharedFiles);
 router.get("/owned", requireToken, verifyToken, FileController.getFilesByOwner);
 router.get("/share-pin/:fileId", requireToken, verifyToken, FileController.getShareCode);
-router.get("/share-link/:fileId", requireToken, verifyToken, FileController.getShareLink);
+router.get("/share-link/:fileId", verifyToken, FileController.getShareLink);
 
 export default router;

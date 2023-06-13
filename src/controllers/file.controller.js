@@ -3,6 +3,7 @@ import { File } from "../models/file.model.js";
 import { SharedFiles } from "../models/shared.model.js";
 import fileService from "../services/file.service.js";
 import uploadService from "../services/upload.service.js";
+import { ShareLink } from "../models/share-link.model.js";
 
 config();
 
@@ -209,6 +210,67 @@ class FileController {
       res.status(500).send("Internal Server Error");
     }
   }
+
+  async getFileByShareLink(req, res) {
+    try {
+      const { link } = req.params;
+  
+      // Find the ShareLink record based on the provided link
+      const shareLink = await ShareLink.findOne({ link }).populate("file");
+  
+      // Check if the share link exists and is not deleted
+      if (!shareLink || shareLink.deleted) {
+        return res.status(404).json({ error: "Share link not found" });
+      }
+  
+      // Check if the share link has expired
+      if (shareLink.expirationDate && shareLink.expirationDate < Date.now()) {
+        return res.status(403).json({ error: "Share link has expired" });
+      }
+  
+      const file = shareLink.file;
+  
+      if (file) {
+        if (
+          res.locals.user?._id &&
+          file.owner &&
+          file.owner.toString() !== res.locals.user._id
+        ) {
+          // Check if a shared file already exists for the user and file
+          const existingSharedFile = await SharedFiles.findOne({
+            user: res.locals.user._id,
+            file: file._id,
+          });
+  
+          if (existingSharedFile) {
+            return res.status(200).json(file);
+          }
+  
+          // Create a new SharedFiles record with user and file
+          const newSharedFile = new SharedFiles({
+            user: res.locals.user._id,
+            file: file._id,
+          });
+  
+          // Save the new SharedFiles record
+          await newSharedFile.save();
+        }
+  
+        return res.status(200).json(file);
+      } else {
+        return res.status(404).json({ error: "File not found" });
+      }
+    } catch (error) {
+      console.error("Error getting file by share link:", error);
+      return res
+        .status(500)
+        .json({ error: "Failed to get file by share link" });
+    }
+  }
+
+  
+}
+
 }
 
 export default new FileController();
